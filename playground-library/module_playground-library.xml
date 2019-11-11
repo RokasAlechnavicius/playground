@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_playground-library" default="compile.module.playground-library">
+  <dirname property="module.playground-library.basedir" file="${ant.file.module_playground-library}"/>
+  
+  <property name="module.jdk.home.playground-library" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.playground-library" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.playground-library" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.playground-library" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="playground-library.output.dir" value="${module.playground-library.basedir}/out/production/playground-library"/>
+  <property name="playground-library.testoutput.dir" value="${module.playground-library.basedir}/out/test/playground-library"/>
+  
+  <path id="playground-library.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="playground-library.module.production.classpath">
+    <path refid="${module.jdk.classpath.playground-library}"/>
+  </path>
+  
+  <path id="playground-library.runtime.production.module.classpath">
+    <pathelement location="${playground-library.output.dir}"/>
+  </path>
+  
+  <path id="playground-library.module.classpath">
+    <path refid="${module.jdk.classpath.playground-library}"/>
+    <pathelement location="${playground-library.output.dir}"/>
+  </path>
+  
+  <path id="playground-library.runtime.module.classpath">
+    <pathelement location="${playground-library.testoutput.dir}"/>
+    <pathelement location="${playground-library.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.playground-library">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.playground-library">
+    <patternset refid="excluded.from.module.playground-library"/>
+  </patternset>
+  
+  <path id="playground-library.module.sourcepath">
+    <dirset dir="${module.playground-library.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.playground-library" depends="compile.module.playground-library.production,compile.module.playground-library.tests" description="Compile module playground-library"/>
+  
+  <target name="compile.module.playground-library.production" depends="register.custom.compilers" description="Compile module playground-library; production classes">
+    <mkdir dir="${playground-library.output.dir}"/>
+    <javac2 destdir="${playground-library.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.playground-library}/javac">
+      <compilerarg line="${compiler.args.playground-library}"/>
+      <bootclasspath refid="playground-library.module.bootclasspath"/>
+      <classpath refid="playground-library.module.production.classpath"/>
+      <src refid="playground-library.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.playground-library"/>
+    </javac2>
+    
+    <copy todir="${playground-library.output.dir}">
+      <fileset dir="${module.playground-library.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.playground-library.tests" depends="register.custom.compilers,compile.module.playground-library.production" description="compile module playground-library; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.playground-library" description="cleanup module">
+    <delete dir="${playground-library.output.dir}"/>
+    <delete dir="${playground-library.testoutput.dir}"/>
+  </target>
+</project>
